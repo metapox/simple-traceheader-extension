@@ -1,0 +1,15 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/docker-existing-dockerfile
+{
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:0-16",
+	"remoteUser": "node",
+	"postCreateCommand": "npm install && npm start",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"esbenp.prettier-vscode",
+				"GitHub.copilot"
+			]
+		}
+	}
+}
