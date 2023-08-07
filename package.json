@@ -1,0 +1,13 @@
+{
+  "name": "simple-traceheader-extension",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  }
+}
