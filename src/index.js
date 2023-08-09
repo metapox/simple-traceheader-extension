@@ -15,13 +15,11 @@ class TraceParent {
 
 let headerValues = new Map();
 const traceData = [];
-const maxEntries = 2;  // Adjust this to your needs
+const maxEntries = 5;  // Adjust this to your needs
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
   function(details) {
-  console.log(details);
     if (details.type === 'main_frame') {
-
       const headerValue = new TraceParent;
       headerValues.set(details.tabId, headerValue);
       saveTraceData(traceData, headerValue, details.url);
@@ -44,6 +42,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
 async function saveTraceData(traceData, headerValue, url) {
   // Save the traceData to storage
-  traceData.push({headerValue, url});
-  chrome.storage.local.set({'traceDta': traceData});
+  // TODO計算量を考えて実装する多分いまO(n)
+  // どこでソートすべきかも考える
+  traceData.unshift({headerValue, url});
+  if (traceData.length > maxEntries) {
+    traceData.splice(maxEntries);
+  }
+  console.log(traceData);
+  chrome.storage.local.set({'traceData': traceData});
 }

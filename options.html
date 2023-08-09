@@ -5,13 +5,6 @@
     <label for="url">URL:</label><br>
     <input type="text" id="url" name="url"><br>
     <button id="save">Save</button>
-    <script>
-      document.getElementById('save').addEventListener('click', function() {
-        var url = document.getElementById('url').value;
-        chrome.storage.sync.set({url: url}, function() {
-          console.log('URL is ' + url);
-        });
-      });
-    </script>
+    <script src="options.js"></script>
   </body>
 </html>
