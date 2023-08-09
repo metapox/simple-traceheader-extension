@@ -14,20 +14,17 @@ class TraceParent {
 }
 
 let headerValues = new Map();
+const traceData = [];
 const maxEntries = 2;  // Adjust this to your needs
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
   function(details) {
-
+  console.log(details);
     if (details.type === 'main_frame') {
-      const headerValue = new TraceParent;
-      headerValues.set(details.tabId, headerValue.toString());
 
-      // If the map has too many entries, delete the oldest one
-      if (headerValues.size > maxEntries) {
-        let oldestKey = headerValues.keys().next().value;
-        headerValues.delete(oldestKey);
-      }
+      const headerValue = new TraceParent;
+      headerValues.set(details.tabId, headerValue);
+      saveTraceData(traceData, headerValue, details.url);
     }
 
     // Set the header for child requests
@@ -35,7 +32,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     if (storedHeaderValue) {
       details.requestHeaders.push({
         name: 'traceparent',
-        value: storedHeaderValue
+        value: storedHeaderValue.toString()
       });
 
       return {requestHeaders: details.requestHeaders};
@@ -44,3 +41,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
   {urls: ['<all_urls>']},
   ['blocking', 'requestHeaders']
 );
+
+async function saveTraceData(traceData, headerValue, url) {
+  // Save the traceData to storage
+  traceData.push({headerValue, url});
+  chrome.storage.local.set({'traceDta': traceData});
+}
