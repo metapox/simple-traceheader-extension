@@ -1,17 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <style>
-    /* body width */
-    body {
-      width: 700px;
-    }
-    #links > * + * {
-      margin-top: 20px; /* 20pxの間隔を開ける */
-    }
-  </style>
+  <head>
+    <style>
+      body {
+        width: 500px;
+      }
+    </style>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
   <body>
-    <h1>trace Links</h1>
-    <div id="links"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col s7"><h5>Trace Links</h5></div>
+        <div class="col s5 valign-wrapper">
+          <div class="switch valign">
+            <label>
+              Off
+              <input type="checkbox">
+              <span class="lever"></span>
+              On
+            </label>
+          </div>
+        </div>
+
+        <ul class="col s12 collection" id="links">
+        </ul>
+      </div>
+    </div>
     <script src="popup.js"></script>
+    <script type="text/javascript" src="js/materialize.min.js"></script>
   </body>
 </html>

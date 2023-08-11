@@ -1,10 +1,22 @@
 <!DOCTYPE html>
+<html lang="ja">
 <html>
+  <head>
+    <meta charset="utf-8">
+    <title>Options</title>
+    <script src="options.js" defer></script>
+    <style>
+      #url {
+        width: 500px;
+      }
+    </style>
+  </head>
   <body>
     <h1>Extension Settings</h1>
-    <label for="url">URL:</label><br>
+
+    <p>可視化ツールのURLを入力してください。traceIDになる部分は<strong>${traceparent}</strong>と記述してください。</p>
+    <label for="url" id="url-label">URL: </label><br>
     <input type="text" id="url" name="url"><br>
     <button id="save">Save</button>
-    <script src="options.js"></script>
   </body>
 </html>

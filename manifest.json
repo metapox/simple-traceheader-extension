@@ -11,12 +11,13 @@
   ],
   "background": {
     "scripts": [
-      "index.js"
+      "background.js"
     ],
     "persistent": true
   },
   "options_page": "options.html",
   "browser_action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "img/off_icon.png"
   }
 }

@@ -5,6 +5,7 @@
     "start": "webpack --config webpack.config.js"
   },
   "dependencies": {
+    "materialize-css": "^1.0.0-rc.2"
   },
   "devDependencies": {
     "webpack": "^4.44.2",
