@@ -15,8 +15,12 @@
     <h1>Extension Settings</h1>
 
     <p>可視化ツールのURLを入力してください。traceIDになる部分は<strong>${traceparent}</strong>と記述してください。</p>
-    <label for="url" id="url-label">URL: </label><br>
-    <input type="text" id="url" name="url"><br>
-    <button id="save">Save</button>
+    <label for="url" id="prod-url-label">Prod環境のURL: </label><br>
+    <input type="text" id="prod-url" name="url"><br>
+    <button id="prod-save">Save</button><br>
+
+    <label for="url" id="dev-url-label">dev環境のURL: </label><br>
+    <input type="text" id="dev-url" name="url"><br>
+    <button id="dev-save">Save</button>
   </body>
 </html>
