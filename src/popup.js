@@ -1,20 +1,39 @@
-function createTraceLink(toolUrl) {
+function createTraceLink(toolUrl1, toolUrl2) {
   chrome.storage.local.get(function(data) {
     const traces = data['traceData'] || [];
     let linksDiv = document.getElementById('links');
+    console.log(linksDiv);
 
     traces.forEach(function(trace) {
-      let a = document.createElement('a');
-      a.href = toolUrl.replace('${traceparent}', trace.headerValue.traceId); // Assuming each traceparent is a URL
-      a.classList.add("collection-item");
-      a.textContent = trace.url;
-      a.target = "_blank";
-      linksDiv.appendChild(a);
+      const tr = document.createElement('tr');
+      tr.classList.add("collection-item");
+      const uritd = document.createElement('td');
+      uritd.textContent = trace.url;
+      tr.appendChild(uritd);
+
+      const prodtd = document.createElement('td');
+      let proda = document.createElement('a');
+      proda.href = toolUrl1.replace('${traceparent}', trace.headerValue.traceId); // Assuming each traceparent is a URL
+      proda.textContent = 'prod';
+      proda.target = "_blank";
+      prodtd.appendChild(proda);
+      tr.appendChild(prodtd);
+
+      const devtd = document.createElement('td');
+      let deva = document.createElement('a');
+      deva.href = toolUrl2.replace('${traceparent}', trace.headerValue.traceId); // Assuming each traceparent is a URL
+      deva.textContent = 'dev';
+      deva.target = "_blank";
+      devtd.appendChild(deva);
+      tr.appendChild(devtd);
+
+      linksDiv.appendChild(tr);
     });
   });
 }
-chrome.storage.sync.get('toolUrl', function(data) {
-  createTraceLink(data['toolUrl']);
+chrome.storage.sync.get(function(data) {
+  console.log(data);
+  createTraceLink(data['toolUrl1'], data['toolUrl2']);
 });
 
 document.addEventListener('DOMContentLoaded', function() {
