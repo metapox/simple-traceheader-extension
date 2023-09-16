@@ -7,8 +7,12 @@ function createTraceLink(toolUrl1, toolUrl2) {
     traces.forEach(function(trace) {
       const tr = document.createElement('tr');
       tr.classList.add("collection-item");
+
       const uritd = document.createElement('td');
-      uritd.textContent = trace.url;
+      uritd.classList.add("truncate-text");
+      const urip = document.createElement('p');
+      urip.textContent = trace.url;
+      uritd.appendChild(urip);
       tr.appendChild(uritd);
 
       const prodtd = document.createElement('td');
