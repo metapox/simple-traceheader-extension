@@ -15,11 +15,11 @@ function createTraceLinkList(toolUrl1, toolUrl2) {
       tr.appendChild(uritd);
 
       const prodtd = document.createElement('td');
-      prodtd.appendChild(createTraceLink('prod', toolUrl1, trace.headerValue.traceId));
+      prodtd.appendChild(createTraceLink('prod', toolUrl1, trace.traceparent.traceId));
       tr.appendChild(prodtd);
 
       const devtd = document.createElement('td');
-      devtd.appendChild(createTraceLink('dev', toolUrl2, trace.headerValue.traceId));
+      devtd.appendChild(createTraceLink('dev', toolUrl2, trace.traceparent.traceId));
       tr.appendChild(devtd);
 
       linksDiv.appendChild(tr);
@@ -53,11 +53,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
   switchButton.addEventListener('change', function() {
     if (switchButton.checked) {
-      chrome.runtime.sendMessage({action: "startBackgroundProcess"});
-      chrome.browserAction.setIcon({path: "img/on_icon.png"});
+      chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        let activeTab = tabs[0];
+        chrome.runtime.sendMessage({action: "startTraceRquest", tab: activeTab});
+      });
+
+      // chrome.browserAction.setIcon({path: "img/on_icon.png"});
     } else {
       chrome.runtime.sendMessage({action: "stopBackgroundProcess"});
-      chrome.browserAction.setIcon({path: "img/off_icon.png"});
+      // chrome.browserAction.setIcon({path: "img/off_icon.png"});
     }
     chrome.storage.sync.set({enabled: switchButton.checked});
   });

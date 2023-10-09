@@ -1,22 +1,20 @@
 {
   "name": "simple-traceheader-extension",
   "version": "1.0.0",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "description": "traceparent header extension",
   "permissions": [
-    "<all_urls>",
     "webRequest",
-    "webRequestBlocking",
-    "storage"
+    "declarativeNetRequest",
+    "storage",
+    "tabs",
+    "activeTab"
   ],
   "background": {
-    "scripts": [
-      "background.js"
-    ],
-    "persistent": true
+    "service_worker": "background.js"
   },
   "options_page": "options.html",
-  "browser_action": {
+  "action": {
     "default_popup": "popup.html",
     "default_icon": "img/off_icon.png"
   }

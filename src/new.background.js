@@ -1,15 +1,29 @@
-import { Trace } from './trace.js';
+import { TraceParent, TraceStorage } from './trace.js';
+
+// set variables for the background process
+let traceStorage = new TraceStorage();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if(message.action === "startTraceRquest") {
-    setTraceParent();
+    startTraceRquest(sender);
   }
 })
 
-// traceparentの更新して、ルールを更新する
-function setTraceParent() {
-  const traceparent = new Trace();
-  chrome.declarativeNetRequest.updateDynamicRules({
+async function startTraceRquest(sender) {
+  const traceparent = new TraceParent();
+
+  try {
+    await setTraceParentRule(traceparent);
+    chrome.tabs.reload(sender.tab.id);
+    await traceStorage.save(traceparent, sender.tab.url);
+    await removeTraceParentRule();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+async function setTraceParentRule(traceparent) {
+  await chrome.declarativeNetRequest.updateDynamicRules({
     removeRuleIds: ["traceparent"],
     addRules: [{
       id: "traceparent",
@@ -23,9 +37,15 @@ function setTraceParent() {
         }]
       },
       condition: {
-        urlFilter: "<all_urls>",
+        urlFilter: "*://*/*",
         resourceTypes: ["main_frame"]
       }
     }]
+  });
+}
+
+async function removeTraceParentRule() {
+  chrome.declarativeNetRequest.updateDynamicRules({
+    removeRuleIds: ["traceparent"]
   });
 }
