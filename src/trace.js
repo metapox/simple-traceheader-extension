@@ -18,10 +18,9 @@ class TraceStorage {
     this.maxEntries = maxEntries;
     this.data = [];
 
-    // chrome.storage.local.get(function(data) {
-    //   this.data = data['traceData'] || [];
-    //   console.log(this.data);
-    // })
+    chrome.storage.local.get(function(data) {
+      this.data = data['traceData'] || [];
+    });
   }
 
   async save(traceparent, url) {
@@ -29,7 +28,6 @@ class TraceStorage {
     if (this.data.length > this.maxEntries) {
       this.data.splice(this.maxEntries);
     }
-    console.log(this.data);
     chrome.storage.local.set({'traceData': this.data});
   }
 }
