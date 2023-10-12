@@ -5,22 +5,37 @@
     <meta charset="utf-8">
     <title>Options</title>
     <script src="options.js" defer></script>
-    <style>
-      #url {
-        width: 500px;
-      }
-    </style>
+
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   </head>
   <body>
-    <h1>Extension Settings</h1>
+    <div class="container">
+      <div class="row">
+        <h1 class="col s12">Extension Settings</h1>
+        <div class="col s12">
+          <p>可視化ツールのURLを入力してください。urlの中のtraceIDに当たる箇所は<strong>${traceparent}</strong>と記述してください。</p>
+          <p>例: https://jaeger.example.com/trace/${traceparent}</p>
+        </div>
+        <form class="col s12 toolForm" id="prod">
+          <div class="md-form">
+            <label for="prod-url">prod url <span id="prod-current"></span></label>
+            <input type="url" id="prod-url" name="url" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary">送信</button>
+        </form>
 
-    <p>可視化ツールのURLを入力してください。traceIDになる部分は<strong>${traceparent}</strong>と記述してください。</p>
-    <label for="url" id="prod-url-label">prod環境のURL: </label><br>
-    <input type="text" id="prod-url" name="url"><br>
-    <button id="prod-save">Save</button><br>
-
-    <label for="url" id="dev-url-label">dev環境のURL: </label><br>
-    <input type="text" id="dev-url" name="url"><br>
-    <button id="dev-save">Save</button>
+        <form class="col s12 toolForm" id="dev">
+          <div class="md-form">
+            <label for="dev-url">dev url <span id="dev-current"></span></label>
+            <input type="url" id="dev-url" name="url" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary">送信</button>
+        </form>
+      </div>
+    </div>
   </body>
 </html>
