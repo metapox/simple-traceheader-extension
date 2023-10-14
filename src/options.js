@@ -1,25 +1,35 @@
-const prodUrl = document.getElementById('prod-url-label');
-chrome.storage.sync.get('toolUrl1', function(data) {
-  prodUrl.textContent = `prod環境のURL: ${data['toolUrl1']}`;
-});
+document.addEventListener("DOMContentLoaded", function() {
+  chrome.storage.sync.get(function(data) {
+    const tools = data['tools'] || {};
 
-document.getElementById('prod-save').addEventListener('click', function() {
-  const url = document.getElementById('prod-url').value;
+    for (let key in tools) {
+      const tool = tools[key];
+      document.getElementById(`${tool.name}-current`).textContent = tool.url;
+    }
+  });
 
-  chrome.storage.sync.set({'toolUrl1': url}, function() {
-    prodUrl.textContent = `prod環境のURL: ${data['toolUrl1']}`;
+  const forms = document.querySelectorAll(".toolForm");
+  forms.forEach((form) => {
+    form.addEventListener("submit", toolFormAction);
   });
 });
 
-const devUrl = document.getElementById('dev-url-label');
-chrome.storage.sync.get('toolUrl2', function(data) {
-  devUrl.textContent = `dev環境のURL: ${data['toolUrl2']}`;
-});
+function toolFormAction(e) {
+  e.preventDefault();
 
-document.getElementById('dev-save').addEventListener('click', function() {
-  const url = document.getElementById('dev-url').value;
+  const name = this.id;
+  const url = document.getElementById(`${name}-url`).value;
+  const tool = {
+    name: name,
+    url: url
+  };
 
-  chrome.storage.sync.set({'toolUrl2': url}, function() {
-    devUrl.textContent = `dev環境のURL: ${data['toolUrl2']}`;
+  chrome.storage.sync.get(function(data) {
+    const tools = data['tools'] || {};
+    tools[name]= tool;
+    chrome.storage.sync.set({'tools': tools});
   });
-});
+
+  document.getElementById(`${name}-current`).textContent = url;
+  this.reset();
+}
