@@ -1,7 +1,6 @@
 # simple-traceheader-extension
 
-OpenTelemtryのtraceparentを自動で付与して、
+![demo]("img/demo.gif")
 
-grafana tempoやjeagerなどの可視化ツールのurlを設定しておくと
-
-そのtraceを表示するためのリンクを生成することができるchrome拡張です。
+OpenTelemetryのtraceparentの自動生成とリクエストヘッダーへの付与を行います。
+またそのtraceIDをもとにダッシュボードへのリンクを生成します。
