@@ -16,6 +16,8 @@ async function startTraceRquest(tab) {
   chrome.tabs.reload(tab.id);
   await traceStorage.save(traceparent, tab.url);
   await removeTraceParentRule();
+  await sleep(600);
+  await sendFinishMessage();
 }
 
 async function setTraceParentRule(traceparent) {
@@ -44,3 +46,11 @@ async function removeTraceParentRule() {
     removeRuleIds: [100231]
   });
 }
+
+async function sendFinishMessage() {
+  chrome.runtime.sendMessage({action: "finishTraceRquest"});
+}
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};

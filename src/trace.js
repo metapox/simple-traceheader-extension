@@ -29,6 +29,7 @@ class TraceStorage {
       this.data.splice(this.maxEntries);
     }
     chrome.storage.local.set({'traceData': this.data});
+    chrome.runtime.sendMessage({action: "changeTraceData", traceData: this.data});
   }
 }
 

@@ -1,52 +1,69 @@
-function createTraceLinkList(toolUrl1, toolUrl2) {
-  chrome.storage.local.get(function(data) {
-    const traces = data['traceData'] || [];
-    let linksDiv = document.getElementById('links');
+// set global variables
+const TOOL_KEYS = ['prod', 'dev'];
+let tools = [];
 
-    traces.forEach(function(trace) {
-      const tr = document.createElement('tr');
-      tr.classList.add("collection-item");
-
-      const uritd = document.createElement('td');
-      uritd.classList.add("truncate-text");
-      const urip = document.createElement('p');
-      urip.textContent = trace.url;
-      uritd.appendChild(urip);
-      tr.appendChild(uritd);
-
-      const prodtd = document.createElement('td');
-      prodtd.appendChild(createTraceLink('prod', toolUrl1, trace.traceparent.traceId));
-      tr.appendChild(prodtd);
-
-      const devtd = document.createElement('td');
-      devtd.appendChild(createTraceLink('dev', toolUrl2, trace.traceparent.traceId));
-      tr.appendChild(devtd);
-
-      linksDiv.appendChild(tr);
-    });
+// list
+// parameter traces = [{url, traceparent}]
+// parameter tools = [{name, url}]
+function updateList(traces, tools) {
+  let links = document.getElementById('links');
+  let innerHtml = '';
+  traces.forEach(trace => {
+    innerHtml += tr(trace, tools);
   });
+
+  links.innerHTML = innerHtml;
 }
 
-function createTraceLink(linkName, toolUrl, traceId) {
-  if(!toolUrl) {
-    let ptag = document.createElement('p');
-    ptag.textContent = linkName;
-    return ptag
+// tr parts
+// parameter trace = {url, traceparent}
+// parameter tools = [{name, url}]
+function tr(trace, tools) {
+  innerHtml = `<tr class="collection-item">
+    <td class="truncate-text"><p>${trace.url}</p></td>`
+  TOOL_KEYS.forEach(key => {
+    let tool = tools[key];
+    if(tool == null) tool = {name: key, url: null};
+    innerHtml += `<td>${traceLink(trace, tool)}</td>`
+  });
+  innerHtml += `</tr>`
+  return innerHtml;
+}
+
+// trace link
+// parameter trace = {url, traceparent}
+// parameter tool = {name, url}
+function traceLink(trace, tool) {
+  let innerHtml;
+  if(tool.url == null) {
+    innerHtml = `<p>${tool.name}</p>`;
   } else {
-    let link = document.createElement('a');
-    link.href = toolUrl.replace('${traceparent}', traceId);
-    link.textContent = linkName;
-    link.target = "_blank";
-    return link
+    innerHtml = `<a href="${tool.url.replace('${traceparent}', trace.traceparent.traceId)}" target="_blank">${tool.name}</a>`;
   }
+
+  return innerHtml;
 }
 
-chrome.storage.sync.get(function(data) {
-  createTraceLinkList(data['toolUrl1'], data['toolUrl2']);
+// set initial tracedata
+chrome.storage.local.get(function(data) {
+  const traces = data['traceData'] || [];
+  chrome.storage.sync.get(function(data) {
+    tools = data['tools'] || [];
+    updateList(traces, tools);
+  });
 });
 
+// set event listener for message
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if(message.action === "changeTraceData") {
+    updateList(message.traceData, tools);
+  }
+});
+
+// button parts
 document.addEventListener('DOMContentLoaded', function() {
   const switchButton = document.querySelector('input[type="checkbox"]');
+
   chrome.storage.sync.get('enabled', function(data) {
     switchButton.checked = data.enabled;
   });
@@ -57,12 +74,46 @@ document.addEventListener('DOMContentLoaded', function() {
         let activeTab = tabs[0];
         chrome.runtime.sendMessage({action: "startTraceRquest", tab: activeTab});
       });
-
-      // chrome.browserAction.setIcon({path: "img/on_icon.png"});
-    } else {
-      chrome.runtime.sendMessage({action: "stopBackgroundProcess"});
-      // chrome.browserAction.setIcon({path: "img/off_icon.png"});
     }
     chrome.storage.sync.set({enabled: switchButton.checked});
   });
+
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if(message.action === "finishTraceRquest") {
+      switchButton.checked = false;
+      chrome.storage.sync.set({enabled: switchButton.checked});
+    }
+  });
 });
+
+
+// const switchButton = new SwitchButton();
+
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//   if(message.action === "finishTraceRquest") {
+//     switchButton.disable();
+//   }
+// });
+
+// class SwitchButton {
+//   constructor(selector, onChange, onDisable) {
+//     this.switchButton = selector;
+//     chrome.storage.sync.get('enabled', function(data) {
+//       this.switchButton.checked = data.enabled;
+//     });
+//     this.switchButton.addEventListener('change', this.onChange);
+//   }
+
+//   onChange() {
+//     if (this.switchButton.checked) {
+//       chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+//         chrome.runtime.sendMessage({action: "startTraceRquest", tab: tabs[0]});
+//       });
+//     }
+//     chrome.storage.sync.set({enabled: this.switchButton.checked});
+//   }
+
+//   disable() {
+//     this.switchButton.checked = false;
+//   }
+// }
