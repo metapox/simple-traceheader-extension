@@ -1,4 +1,4 @@
-import { TraceParent, TraceStorage } from './trace.js';
+import { TraceParent, TraceStorage, TraceRuleManager } from './trace.js';
 
 // set global variables for the background process
 let traceStorage = new TraceStorage();
@@ -11,40 +11,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 async function startTraceRquest(tab) {
   const traceparent = new TraceParent();
-  await removeTraceParentRule();
-  await setTraceParentRule(traceparent);
+
+  await TraceRuleManager.enable(traceparent);
   chrome.tabs.reload(tab.id);
+  await TraceRuleManager.disable();
+
   await traceStorage.save(traceparent, tab.url);
-  await removeTraceParentRule();
-  await sleep(600);
+  await sleep(600); // wait for reload switch user experience
   await sendFinishMessage();
-}
-
-async function setTraceParentRule(traceparent) {
-  await chrome.declarativeNetRequest.updateDynamicRules({
-    addRules: [{
-      id: 100231,
-      priority: 1,
-      action: {
-        type: "modifyHeaders",
-        requestHeaders: [{
-          header: "traceparent",
-          operation: "set",
-          value: traceparent.toString()
-        }]
-      },
-      condition: {
-        urlFilter: "*://*/*",
-        resourceTypes: ["main_frame"]
-      }
-    }]
-  });
-}
-
-async function removeTraceParentRule() {
-  chrome.declarativeNetRequest.updateDynamicRules({
-    removeRuleIds: [100231]
-  });
 }
 
 async function sendFinishMessage() {
