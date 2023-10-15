@@ -35,7 +35,7 @@ function tr(trace, tools) {
 // parameter tool = {name, url}
 function traceLink(trace, tool) {
   let innerHtml;
-  if(tool.url == null) {
+  if(!tool.url) {
     innerHtml = `<p>${tool.name}</p>`;
   } else {
     innerHtml = `<a href="${tool.url.replace('${traceparent}', trace.traceparent.traceId)}" target="_blank">${tool.name}</a>`;
