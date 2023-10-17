@@ -38,7 +38,7 @@ function traceLink(trace, tool) {
   if(!tool.url) {
     innerHtml = `<p>${tool.name}</p>`;
   } else {
-    innerHtml = `<a href="${tool.url.replace('${traceparent}', trace.traceparent.traceId)}" target="_blank">${tool.name}</a>`;
+    innerHtml = `<a href="${tool.url.replace('${traceid}', trace.traceparent.traceId)}" target="_blank">${tool.name}</a>`;
   }
 
   return innerHtml;
@@ -63,10 +63,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // button parts
 document.addEventListener('DOMContentLoaded', function() {
   const switchButton = document.querySelector('input[type="checkbox"]');
-
-  chrome.storage.sync.get('enabled', function(data) {
-    switchButton.checked = data.enabled;
-  });
 
   switchButton.addEventListener('change', function() {
     if (switchButton.checked) {
