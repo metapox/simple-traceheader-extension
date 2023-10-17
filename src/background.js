@@ -17,7 +17,7 @@ async function startTraceRquest(tab) {
   await TraceRuleManager.disable();
 
   await traceStorage.save(traceparent, tab.url);
-  await sleep(600); // wait for reload switch user experience
+  await sleep(500); // wait for reload switch user experience
   await sendFinishMessage();
 }
 
